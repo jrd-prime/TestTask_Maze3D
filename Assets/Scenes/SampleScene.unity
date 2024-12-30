@@ -567,6 +567,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: CombinedFloor
       objectReference: {fileID: 0}
+    - target: {fileID: 5240242617213986371, guid: 10666c7e6c3e41645b210f9b5145243e, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 13400000, guid: 07632df87e11e3f4699bd66ba5641719, type: 2}
+    - target: {fileID: 6264968835689033578, guid: 10666c7e6c3e41645b210f9b5145243e, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 13400000, guid: 07632df87e11e3f4699bd66ba5641719, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1094,10 +1102,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1605045340}
     m_Modifications:
-    - target: {fileID: -3314151231645209262, guid: e2bc35a3a729ba846a5816200fac5fc3, type: 3}
-      propertyPath: sceneId
-      value: 2860791661
-      objectReference: {fileID: 0}
     - target: {fileID: 6851546104838764374, guid: e2bc35a3a729ba846a5816200fac5fc3, type: 3}
       propertyPath: m_Name
       value: Dependency

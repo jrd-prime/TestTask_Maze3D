@@ -20,7 +20,7 @@ namespace Game.Scripts
         private IUserInput _input;
 
 
-        private Vector3 _direction;
+        private Vector3 direction;
         private readonly CompositeDisposable _disposables = new();
 
         private void Awake()
@@ -39,11 +39,11 @@ namespace Game.Scripts
             _input.MoveDirection.Subscribe(SetDirection).AddTo(_disposables);
         }
 
-        private void SetDirection(Vector3 direction)
+        private void SetDirection(Vector3 dir)
         {
             if (!isLocalPlayer) return;
-            Debug.LogWarning("direction: " + direction);
-            _direction = direction;
+            Debug.LogWarning("direction: " + dir);
+            direction = dir;
         }
 
         private void FixedUpdate()
@@ -51,7 +51,17 @@ namespace Game.Scripts
             if (!isLocalPlayer) return;
 
             Move();
+            Rotate();
             CameraFollow();
+        }
+
+        private void Rotate()
+        {
+            var side = direction.x;
+
+            if (side == 0) return;
+            var rotationAmount = side * rotationSpeed * Time.fixedDeltaTime;
+            _rb.MoveRotation(_rb.rotation * Quaternion.Euler(0f, rotationAmount, 0f));
         }
 
         private void CameraFollow()
@@ -60,96 +70,32 @@ namespace Game.Scripts
         }
 
         private float _currentSpeed = 0f; // Текущая скорость
-        private float _maxSpeed = 10f; // Максимальная скорость
+        private float maxSpeed = 10f; // Максимальная скорость
         private float _acceleration = 3f; // Коэффициент ускорения (м/с^2)
         private float _deceleration = 5f; // Коэффициент замедления
         private float _reverseSpeed = 2f; // Скорость пятиться назад
         private float _runTimeLimit = 3.5f; // Время до достижения максимальной скорости
         private float _runTime = 0f; // Счётчик времени разгона
+        private float currentSpeed = 0f; // текущая скорость
+        private float acceleration; // ускорение
+        private float deceleration; // замедление
+        private float speed = 10f;
+        private float rotationSpeed = 300f;
 
-       private void Move()
-{
-    var velocity = _rb.linearVelocity;
-
-    if (_direction.magnitude > 0.1f)
-    {
-        // Направление камеры
-        Vector3 cameraForward = _camera.transform.forward;
-        Vector3 cameraRight = _camera.transform.right;
-
-        // Проецируем forward и right камеры на горизонтальную плоскость
-        cameraForward.y = 0;
-        cameraRight.y = 0;
-        cameraForward.Normalize();
-        cameraRight.Normalize();
-
-        // Преобразуем локальный ввод в мировые координаты
-        Vector3 moveDirection = _direction.z * cameraForward + _direction.x * cameraRight;
-
-        if (_direction.z > 0) // Если движение вперед
+        private void Move()
         {
-            // Увеличиваем скорость до максимальной
-            _runTime += Time.fixedDeltaTime;
-            _currentSpeed = Mathf.Clamp(
-                _currentSpeed + _acceleration * Time.fixedDeltaTime,
-                0,
-                _maxSpeed);
+            var velocity = _rb.linearVelocity;
+            // forward 0 0 1
+            // back 0 0 -1
+            // right 1 0 0
+            // left -1 0 0
 
-            // После достижения максимальной скорости прекращаем разгон
-            if (_runTime >= _runTimeLimit)
-            {
-                _currentSpeed = _maxSpeed;
-            }
+            // Направление движения по оси Z (вперед, куда смотрит префаб)
+            Vector3 moveDirection = transform.forward * direction.z;
+
+            // Обновляем скорость
+            _rb.linearVelocity = new Vector3(moveDirection.x * speed, velocity.y, moveDirection.z * speed);
         }
-        else if (_direction.z < 0) // Если движение назад
-        {
-            // Инвертируем вектор для движения назад
-            moveDirection = -moveDirection;
-
-            // При движении назад сбрасываем скорость до минимальной (если было сильное ускорение)
-            if (_currentSpeed > 0)
-            {
-                // Замедление до остановки
-                _currentSpeed = Mathf.MoveTowards(_currentSpeed, 0, _deceleration * Time.fixedDeltaTime);
-            }
-            else
-            {
-                // Пятимся назад после остановки
-                _currentSpeed = Mathf.Clamp(
-                    _currentSpeed - _acceleration * Time.fixedDeltaTime,
-                    -_reverseSpeed,
-                    0);
-            }
-        }
-
-        // Применяем силу для изменения скорости на основе движения
-        Vector3 targetVelocity = moveDirection.normalized * _currentSpeed;
-        Vector3 velocityChange = targetVelocity - velocity;
-
-        // Используем ForceMode.VelocityChange для быстрого изменения скорости
-        _rb.AddForce(velocityChange, ForceMode.VelocityChange);
-    }
-    else
-    {
-        // Если нет ввода, замедляем игрока
-        if (velocity.magnitude > 0.1f)
-        {
-            // Замедление: постепенно уменьшаем скорость
-            Vector3 decelerationForce = -velocity.normalized * _deceleration;
-            _rb.AddForce(decelerationForce, ForceMode.Acceleration);
-        }
-        else
-        {
-            // Остановка, если скорость очень мала
-            _rb.linearVelocity = Vector3.zero; // Останавливаем полностью, если скорость мала
-        }
-
-        // Постепенно снижаем скорость до нуля
-        _currentSpeed = Mathf.MoveTowards(_currentSpeed, 0, _deceleration * Time.fixedDeltaTime);
-    }
-}
-
-
 
         private void OnDestroy() => _disposables.Dispose();
     }
