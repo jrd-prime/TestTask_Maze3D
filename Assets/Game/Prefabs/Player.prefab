@@ -53,6 +53,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  MoveSpeed: 10
   _dep: {fileID: 3811481385471002060, guid: e2bc35a3a729ba846a5816200fac5fc3, type: 3}
   _camera: {fileID: 7120164593117525717, guid: 0767061741e9f944ab5555e28b3c1759, type: 3}
   offset: {x: -7, y: 15, z: -7}
@@ -117,7 +118,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7559360012276616259}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 07632df87e11e3f4699bd66ba5641719, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -141,9 +142,9 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7559360012276616259}
   serializedVersion: 4
-  m_Mass: 1
+  m_Mass: 100
   m_Drag: 0
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}

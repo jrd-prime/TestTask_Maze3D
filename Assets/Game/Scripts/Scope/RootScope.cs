@@ -1,11 +1,11 @@
 ﻿using System;
-using Game.Scripts.Input;
+using Game.Scripts.Client.Input;
 using Mirror;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
-namespace Game.Scripts
+namespace Game.Scripts.Scope
 {
     public class RootScope : LifetimeScope
     {
