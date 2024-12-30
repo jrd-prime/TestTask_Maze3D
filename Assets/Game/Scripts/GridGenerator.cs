@@ -1,17 +1,18 @@
 using UnityEngine;
 using System.Collections.Generic;
+using Game.Scripts.Help;
 
 public class GridGenerator
 {
     private readonly Camera _camera;
-    private readonly GameObject _tilePrefab; // Префаб тайла (например, плоскость 2x2)
-    private readonly GameObject _holePrefab; // Префаб ямы
+    private readonly GameObject _tilePrefab;
+    private readonly GameObject _holePrefab;
     private readonly GameObject _wallPrefab;
-    private readonly int _tilesPerGridX = 32; // Количество тайлов по оси X
-    private readonly int _tilesPerGridY = 18; // Количество тайлов по оси Y
+    private readonly int _tilesPerGridX = 32;
+    private readonly int _tilesPerGridY = 18;
     private readonly Transform _parent;
 
-    private List<Vector2> _holes; // Список для хранения координат ям
+    private List<Vector2> _holes;
 
     public GridGenerator(Camera camera, GameObject tilePrefab, GameObject holePrefab, GameObject wallPrefab,
         int tilesPerGridX,
@@ -37,20 +38,19 @@ public class GridGenerator
         _holes.Add(new Vector2(14, 12));
         _holes.Add(new Vector2(22, 13));
 
-        float tileSize = 4.0f;
-        List<MeshFilter> meshFilters = new List<MeshFilter>();
-        List<GameObject> allCreatedObjects = new List<GameObject>();
+        var tileSize = 4.0f;
+        List<MeshFilter> meshFilters = new();
+        List<GameObject> allCreatedObjects = new();
 
-        for (int x = 0; x < _tilesPerGridX; x++)
+        for (var x = 0; x < _tilesPerGridX; x++)
         {
-            for (int y = 0; y < _tilesPerGridY; y++)
+            for (var y = 0; y < _tilesPerGridY; y++)
             {
-                // Обработка стен
                 if (x == 0 || x == _tilesPerGridX - 1 || y == 0 || y == _tilesPerGridY - 1)
                 {
-                    Vector3 wallPosition = new Vector3(x * tileSize, 0, y * tileSize);
-                    GameObject wall = Object.Instantiate(_wallPrefab, wallPosition, Quaternion.identity, _parent);
-                    MeshFilter[] wallMeshFilters = wall.GetComponentsInChildren<MeshFilter>();
+                    Vector3 wallPosition = new(x * tileSize, 0, y * tileSize);
+                    var wall = Object.Instantiate(_wallPrefab, wallPosition, Quaternion.identity, _parent);
+                    var wallMeshFilters = wall.GetComponentsInChildren<MeshFilter>();
                     foreach (var mFilter in wallMeshFilters)
                     {
                         meshFilters.Add(mFilter);
@@ -60,18 +60,16 @@ public class GridGenerator
                     continue;
                 }
 
-                // Обработка ям
                 if (_holes.Contains(new Vector2(x, y)))
                 {
-                    Vector3 holePosition = new Vector3(x * tileSize, 0, y * tileSize);
-                    GameObject hole = Object.Instantiate(_holePrefab, holePosition, Quaternion.identity, _parent);
+                    Vector3 holePosition = new(x * tileSize, 0, y * tileSize);
+                    var hole = Object.Instantiate(_holePrefab, holePosition, Quaternion.identity, _parent);
 
-                    // Добавляем BoxCollider для каждой ямы
-                    BoxCollider boxCollider = hole.AddComponent<BoxCollider>();
+                    var boxCollider = hole.AddComponent<BoxCollider>();
                     boxCollider.size = new Vector3(tileSize, 1f, tileSize);
                     boxCollider.center = new Vector3(0, 0.5f, 0);
 
-                    MeshFilter[] holeMeshFilters = hole.GetComponentsInChildren<MeshFilter>();
+                    var holeMeshFilters = hole.GetComponentsInChildren<MeshFilter>();
                     foreach (var mFilter in holeMeshFilters)
                     {
                         meshFilters.Add(mFilter);
@@ -82,11 +80,10 @@ public class GridGenerator
                     continue;
                 }
 
-                // Генерация тайлов
-                Vector3 position = new Vector3(x * tileSize, 0, y * tileSize);
-                GameObject tile = Object.Instantiate(_tilePrefab, position, Quaternion.Euler(90, 0, 0), _parent);
+                Vector3 position = new(x * tileSize, 0, y * tileSize);
+                var tile = Object.Instantiate(_tilePrefab, position, Quaternion.Euler(90, 0, 0), _parent);
                 tile.transform.localScale = new Vector3(tileSize, tileSize, 1);
-                MeshFilter meshFilter = tile.GetComponent<MeshFilter>();
+                var meshFilter = tile.GetComponent<MeshFilter>();
 
                 if (meshFilter != null)
                 {
@@ -97,10 +94,8 @@ public class GridGenerator
             }
         }
 
-        // Комбинирование сеток
         CombineMeshesSeparately(meshFilters);
 
-        // Удаление временных объектов
         foreach (var obj in allCreatedObjects)
         {
             Object.Destroy(obj);
@@ -110,21 +105,19 @@ public class GridGenerator
 
     private void CombineMeshesSeparately(List<MeshFilter> meshFilters)
     {
-        List<CombineInstance> floorCombines = new List<CombineInstance>();
-        List<CombineInstance> holeCombines = new List<CombineInstance>();
-        List<CombineInstance> wallCombines = new List<CombineInstance>();
+        List<CombineInstance> floorCombines = new();
+        List<CombineInstance> holeCombines = new();
+        List<CombineInstance> wallCombines = new();
 
         foreach (var meshFilter in meshFilters)
         {
-            Vector3 position = meshFilter.transform.position / 4.0f; // Tile size = 4
+            var position = meshFilter.transform.position / 4.0f;
             Vector2Int tileCoords = new Vector2Int(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.z));
 
-            // Фильтрация объектов по тегу
             string tag = meshFilter.gameObject.tag;
 
             if (tag == "Hole")
             {
-                // Обработка ям
                 holeCombines.Add(new CombineInstance
                 {
                     mesh = meshFilter.sharedMesh,
@@ -133,7 +126,6 @@ public class GridGenerator
             }
             else if (tag == "Wall")
             {
-                // Обработка стен
                 wallCombines.Add(new CombineInstance
                 {
                     mesh = meshFilter.sharedMesh,
@@ -142,7 +134,6 @@ public class GridGenerator
             }
             else if (tag == "Floor" && position.y == 0)
             {
-                // Обработка пола
                 floorCombines.Add(new CombineInstance
                 {
                     mesh = meshFilter.sharedMesh,
@@ -151,7 +142,6 @@ public class GridGenerator
             }
         }
 
-        // Создание комбинированных объектов
         CreateCombinedObject(floorCombines, "CombinedFloor", GetSharedMaterial(_tilePrefab));
         CreateCombinedObject(holeCombines, "CombinedHoles", GetSharedMaterial(_holePrefab));
         CreateCombinedObject(wallCombines, "CombinedWalls", GetSharedMaterial(_wallPrefab));
@@ -160,7 +150,6 @@ public class GridGenerator
 
     private Material GetSharedMaterial(GameObject prefab)
     {
-        // Получаем материал из всех дочерних MeshRenderer
         MeshRenderer[] renderers = prefab.GetComponentsInChildren<MeshRenderer>();
         return renderers.Length > 0 ? renderers[0].sharedMaterial : null;
     }
@@ -170,59 +159,65 @@ public class GridGenerator
     {
         if (combines.Count == 0) return;
 
-        GameObject combinedObject = new GameObject(name) { isStatic = true };
+        GameObject combinedObject = new(name) { isStatic = true };
         combinedObject.transform.SetParent(_parent);
 
-        MeshFilter meshFilter = combinedObject.AddComponent<MeshFilter>();
-        MeshRenderer meshRenderer = combinedObject.AddComponent<MeshRenderer>();
+        var meshFilter = combinedObject.AddComponent<MeshFilter>();
+        var meshRenderer = combinedObject.AddComponent<MeshRenderer>();
 
-        Mesh combinedMesh = new Mesh();
+        Mesh combinedMesh = new();
         combinedMesh.CombineMeshes(combines.ToArray(), true, true);
+
+        MeshSaver.SaveMesh(combinedMesh, name + "_CombinedMesh_save", "Assets/Generated/Meshes");
+
         meshFilter.mesh = combinedMesh;
 
         meshRenderer.material = material;
 
-        // Добавляем коллайдер только для пола и стен
         if (name == "CombinedFloor")
         {
-            MeshCollider collider = combinedObject.AddComponent<MeshCollider>();
+            var collider = combinedObject.AddComponent<MeshCollider>();
             collider.sharedMesh = CreateMeshWithHoles(combinedMesh, _holes);
-            collider.convex = false;
+            collider.convex = true;
+
+            combinedObject.layer = LayerMask.NameToLayer("Floor");
         }
         else if (name == "CombinedWalls")
         {
-            MeshCollider collider = combinedObject.AddComponent<MeshCollider>();
+            var collider = combinedObject.AddComponent<MeshCollider>();
             collider.sharedMesh = combinedMesh;
+            collider.convex = true;
+
+            combinedObject.layer = LayerMask.NameToLayer("Walls");
         }
 
-        // Добавление BoxCollider только для CombinedHoles
         if (name == "CombinedHoles")
         {
-            BoxCollider boxCollider = combinedObject.AddComponent<BoxCollider>();
-            boxCollider.isTrigger = true; // Включаем триггер
+            // var boxCollider = combinedObject.AddComponent<BoxCollider>();
+            // boxCollider.isTrigger = true;
+            //
+            // boxCollider.size = new Vector3(4.0f * _tilesPerGridX, 1.0f, 4.0f * _tilesPerGridY);
+            // boxCollider.center = new Vector3((_tilesPerGridX * 4.0f) / 2, -2.5f, (_tilesPerGridY * 4.0f) / 2);
 
-            // Устанавливаем размер коллайдера, примерный расчет для всей области
-            boxCollider.size = new Vector3(4.0f * _tilesPerGridX, 1.0f, 4.0f * _tilesPerGridY);
-            boxCollider.center = new Vector3((_tilesPerGridX * 4.0f) / 2, -2.5f, (_tilesPerGridY * 4.0f) / 2);
+            combinedObject.layer = LayerMask.NameToLayer("Holes");
         }
 
-        combinedObject.layer = LayerMask.NameToLayer("GroundAndWalls");
+        PrefabSaver.SaveAsPrefab(combinedObject, "Assets/Generated/Prefabs");
     }
 
     private Mesh CreateMeshWithHoles(Mesh floorMesh, List<Vector2> holes)
     {
-        Mesh newMesh = new Mesh();
+        Mesh newMesh = new();
 
-        Vector3[] vertices = floorMesh.vertices;
-        int[] triangles = floorMesh.triangles;
+        var vertices = floorMesh.vertices;
+        var triangles = floorMesh.triangles;
 
-        List<int> updatedTriangles = new List<int>();
+        List<int> updatedTriangles = new();
 
-        foreach (int i in triangles)
+        foreach (var i in triangles)
         {
             Vector3 vertex = vertices[i];
 
-            // Округляем координаты до ближайшего целого числа, чтобы точно совпадать с координатами ям
             Vector2 tileCoords = new Vector2(Mathf.RoundToInt(vertex.x / 4), Mathf.RoundToInt(vertex.z / 4));
 
             if (!holes.Exists(h => Vector2.Distance(h, tileCoords) < 0.1f))

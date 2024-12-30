@@ -16,7 +16,7 @@ GameObject:
   m_TagString: Hole
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &5285265096528613447
 Transform:
@@ -88,7 +88,7 @@ GameObject:
   m_TagString: Hole
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &8456767928521922456
 Transform:
@@ -197,7 +197,7 @@ GameObject:
   m_TagString: Hole
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &5157709835774125209
 Transform:
@@ -306,7 +306,7 @@ GameObject:
   m_TagString: Hole
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &4802383836937486576
 Transform:
@@ -415,7 +415,7 @@ GameObject:
   m_TagString: Hole
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &3945611670885720248
 Transform:
@@ -524,7 +524,7 @@ GameObject:
   m_TagString: Hole
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &4767846253007078872
 Transform:
