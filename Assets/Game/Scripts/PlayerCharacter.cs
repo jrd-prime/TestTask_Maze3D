@@ -23,8 +23,14 @@ namespace Game.Scripts
         private Vector3 _direction;
         private readonly CompositeDisposable _disposables = new();
 
+        private void Awake()
+        {
+            if (_dep == null) throw new NullReferenceException(nameof(_dep));
+        }
+
         private void Start()
         {
+            if (!isLocalPlayer) return;
             Debug.LogWarning("PlayerCharacter started.");
             _input = _dep.GetDependency<IUserInput>();
             _rb = GetComponent<Rigidbody>();
@@ -32,12 +38,17 @@ namespace Game.Scripts
             _input.MoveDirection.Subscribe(SetDirection).AddTo(_disposables);
         }
 
-        private void SetDirection(Vector3 direction) => _direction = direction;
+        private void SetDirection(Vector3 direction)
+        {
+            if (!isLocalPlayer) return;
+            Debug.LogWarning("SetDirection in PlayerCharacter called. Direction: " + direction);
+            _direction = direction;
+        }
 
         private void FixedUpdate()
         {
             if (!isLocalPlayer) return;
-            
+
             Move();
             CameraFollow();
         }

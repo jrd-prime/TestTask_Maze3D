@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Mirror;
 using UnityEngine;
 
 namespace Game.Scripts.Help
@@ -25,6 +26,8 @@ namespace Game.Scripts.Help
 
         public T GetDependency<T>()
         {
+            Debug.LogWarning("_rootScope: " + _rootScope);
+
             return _depCache.ContainsKey(typeof(T))
                 ? (T)_depCache[typeof(T)]
                 : Resolve<T>();

@@ -9,12 +9,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2747363450874612223}
+  - component: {fileID: -4578377852127101484}
   - component: {fileID: 4029570353814884873}
   - component: {fileID: 167383069029339527}
   - component: {fileID: 6497810020278623775}
   - component: {fileID: 5421178619070853490}
   - component: {fileID: 137174648425529112}
-  - component: {fileID: -4578377852127101484}
   - component: {fileID: -7562693947604338402}
   m_Layer: 31
   m_Name: Player
@@ -38,6 +38,25 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &-4578377852127101484
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7559360012276616259}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f17fced6b0ba4b398b35f7770f21d4ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  _dep: {fileID: 3811481385471002060, guid: e2bc35a3a729ba846a5816200fac5fc3, type: 3}
+  _camera: {fileID: 7120164593117525717, guid: 0767061741e9f944ab5555e28b3c1759, type: 3}
+  offset: {x: -7, y: 15, z: -7}
+  _moveSpeed: 10
 --- !u!33 &4029570353814884873
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -158,23 +177,6 @@ MonoBehaviour:
   serverOnly: 0
   visibility: 0
   hasSpawned: 0
---- !u!114 &-4578377852127101484
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7559360012276616259}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f17fced6b0ba4b398b35f7770f21d4ba, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  _camera: {fileID: 7120164593117525717, guid: 0767061741e9f944ab5555e28b3c1759, type: 3}
-  offset: {x: -7, y: 15, z: -7}
 --- !u!114 &-7562693947604338402
 MonoBehaviour:
   m_ObjectHideFlags: 0

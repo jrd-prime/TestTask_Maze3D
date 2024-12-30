@@ -1,4 +1,5 @@
 ﻿using System;
+using Game.Scripts.Input;
 using Mirror;
 using UnityEngine;
 using VContainer;
@@ -13,11 +14,15 @@ namespace Game.Scripts
 
         protected override void Configure(IContainerBuilder builder)
         {
+            Debug.LogWarning("RootScope configured.");
             base.Configure(builder);
 
             if (networkManager == null) throw new NullReferenceException($"NetworkManager is null. {name}");
 
             builder.RegisterComponent(networkManager).AsSelf();
+
+            var input = gameObject.AddComponent(typeof(PCUserInput));
+            builder.RegisterComponent(input).As<IUserInput>();
         }
     }
 }
