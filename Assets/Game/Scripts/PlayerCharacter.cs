@@ -90,11 +90,28 @@ namespace Game.Scripts
             // right 1 0 0
             // left -1 0 0
 
-            // Направление движения по оси Z (вперед, куда смотрит префаб)
-            Vector3 moveDirection = transform.forward * direction.z;
-
-            // Обновляем скорость
-            _rb.linearVelocity = new Vector3(moveDirection.x * speed, velocity.y, moveDirection.z * speed);
+            // rotation 0
+            if (direction.x == 0)
+            {
+                if (direction.z > 0)
+                {
+                    Debug.LogWarning("acceleration");
+                }
+                else if (direction.z < 0)
+                {
+                    Debug.LogWarning("deceleration");
+                }
+                else
+                {
+                    Debug.LogWarning("not acceleration / not deceleration");
+                }
+            }
+            else
+            {
+                Debug.LogWarning("Moving with rotation without acceleration / deceleration");
+                var moveDirection = transform.forward * direction.z;
+                _rb.linearVelocity = new Vector3(moveDirection.x * speed, velocity.y, moveDirection.z * speed);
+            }
         }
 
         private void OnDestroy() => _disposables.Dispose();
