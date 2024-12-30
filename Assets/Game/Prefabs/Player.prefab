@@ -173,6 +173,8 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  _camera: {fileID: 7120164593117525717, guid: 0767061741e9f944ab5555e28b3c1759, type: 3}
+  offset: {x: -7, y: 15, z: -7}
 --- !u!114 &-7562693947604338402
 MonoBehaviour:
   m_ObjectHideFlags: 0

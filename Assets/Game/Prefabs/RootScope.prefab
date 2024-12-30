@@ -49,4 +49,3 @@ MonoBehaviour:
   autoRun: 1
   autoInjectGameObjects: []
   networkManager: {fileID: 7080246041643786138, guid: 7b3d8dca12c232b4f97bdc7974fa4d4f, type: 3}
-  spawnManager: {fileID: 9113485203540632454, guid: bc2188abc82209b409b1590a76aabc11, type: 3}

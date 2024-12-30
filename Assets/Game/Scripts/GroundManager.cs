@@ -27,9 +27,9 @@ namespace Game.Scripts
 
             Debug.LogWarning("Combined objects was generated and set");
 
-            Instantiate(floorCombined, transform);
-            Instantiate(holesCombined, transform);
-            Instantiate(wallsCombined, transform);
+            // Instantiate(floorCombined, transform);
+            // Instantiate(holesCombined, transform);
+            // Instantiate(wallsCombined, transform);
         }
     }
 }
