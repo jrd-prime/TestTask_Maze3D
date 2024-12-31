@@ -32,6 +32,7 @@ namespace Game.Scripts.Shared
         public override void OnClientConnect()
         {
             base.OnClientConnect();
+            
             Debug.Log("<color=green>Client connected.</color>");
         }
 

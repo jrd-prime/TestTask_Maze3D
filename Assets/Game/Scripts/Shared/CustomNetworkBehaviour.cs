@@ -15,7 +15,10 @@ namespace Game.Scripts.Shared
         }
 
 
-        protected abstract void OnServerStart();
+        protected virtual void OnServerStart()
+        {
+        }
+
         protected abstract void LoadDependencies();
     }
 }

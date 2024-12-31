@@ -49,3 +49,5 @@ MonoBehaviour:
   autoRun: 1
   autoInjectGameObjects: []
   networkManager: {fileID: 7080246041643786138, guid: 7b3d8dca12c232b4f97bdc7974fa4d4f, type: 3}
+  gameManager: {fileID: 2856973599743961896, guid: c099349bcf900df4dbced758e5248a59, type: 3}
+  coinsManager: {fileID: 1543701704771152994, guid: 24ce71f637ee5b746b4dc6f44994adf5, type: 3}

@@ -2,11 +2,14 @@
 using Game.Scripts.Data.SO;
 using Mirror;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Game.Scripts.Manager
 {
-    public class CoinsManager : NetworkBehaviour
+    public interface ICoinsManager
+    {
+    }
+
+    public class CoinsManager : NetworkBehaviour, ICoinsManager
     {
         [SerializeField] private CoinsManagerSO settings;
 
@@ -14,5 +17,17 @@ namespace Game.Scripts.Manager
         {
             if (settings == null) throw new NullReferenceException(nameof(settings));
         }
+
+        private void Start()
+        {
+            Debug.LogWarning("CoinsManager started.");
+
+            foreach (var spawnPoint in settings.spawnPoints)
+            {
+                var coin = Instantiate(settings.coinPrefab, spawnPoint.position, Quaternion.identity);
+                coin.Initialize(settings.pointsPerCoin, transform);
+            }
+        }
+
     }
 }

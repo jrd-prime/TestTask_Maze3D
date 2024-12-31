@@ -1,6 +1,7 @@
 ﻿using System;
 using Game.Scripts.Client.Input;
 using Game.Scripts.Help;
+using Game.Scripts.Shared;
 using Mirror;
 using R3;
 using UnityEngine;
@@ -21,6 +22,7 @@ namespace Game.Scripts
 
         private Vector3 inputDirection;
         private readonly CompositeDisposable _disposables = new();
+        private IGameManager _gameManager;
 
         private void Awake()
         {
@@ -29,13 +31,29 @@ namespace Game.Scripts
 
         private void Start()
         {
-            if (!isLocalPlayer) return;
+            if (!isOwned) return;
             Debug.LogWarning("PlayerCharacter started.");
-            _input = _dep.GetDependency<IUserInput>();
+
+            LoadDependencies();
+
+            if (isServer) LoadServerDependencies();
+
             _rb = GetComponent<Rigidbody>();
             _camera = Camera.main;
 
             _input.MoveDirection.Subscribe(SetDirection).AddTo(_disposables);
+        }
+
+        private void LoadDependencies()
+        {
+            _input = _dep.GetDependency<IUserInput>();
+        }
+
+        [Server]
+        private void LoadServerDependencies()
+        {
+            _gameManager = _dep.GetDependency<IGameManager>();
+            Debug.LogWarning("_gameManager: " + _gameManager.GetHashCode());
         }
 
         private void FixedUpdate()
@@ -99,5 +117,18 @@ namespace Game.Scripts
         }
 
         private void OnDestroy() => _disposables.Dispose();
+
+
+        public void CollectCoin(int points)
+        {
+            Debug.LogWarning($"PlayerCharacter collected coin ({points} pts).");
+            CmdCollectCoin(points);
+        }
+
+        [Command]
+        private void CmdCollectCoin(int points)
+        {
+            _gameManager.CollectCoin(netId, points);
+        }
     }
 }

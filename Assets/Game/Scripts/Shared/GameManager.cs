@@ -1,5 +1,6 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using Game.Scripts.Help;
+using Game.Scripts.Manager;
 using Mirror;
 using UnityEngine;
 
@@ -7,7 +8,8 @@ namespace Game.Scripts.Shared
 {
     public interface IGameManager
     {
-        // public ISpawnManager SpawnManager { get; }
+        public ICoinsManager CoinsManager { get; }
+        public void CollectCoin(uint id, int points);
     }
 
     public class GameManager : CustomNetworkBehaviour, IGameManager
@@ -15,36 +17,42 @@ namespace Game.Scripts.Shared
         [SerializeField] private PlayerCharacter playerPrefab;
         [SerializeField] private Dep dep;
 
-        // public ISpawnManager SpawnManager { get; private set; }
+        private readonly Dictionary<uint, int> _scores = new();
 
-        // protected override void OnServerStart()
-        // {
-        //     Debug.Log("<color=red>OnStartServer called on the server.</color>");
-        //     Debug.LogWarning("It's server and client");
-        //     PlayerCharacter hostPlayer = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
-        //     NetworkServer.AddPlayerForConnection(connectionToClient, hostPlayer.gameObject);
-        // }
-        //
-        // public override void OnStartClient()
-        // {
-        //     base.OnStartClient();
-        //     Debug.Log("<color=red>OnStartClient called on the client.</color>");
-        //
-        //
-        //     Debug.LogWarning("It's client only");
-        //     PlayerCharacter clientPlayer = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
-        //     NetworkServer.AddPlayerForConnection(connectionToClient, clientPlayer.gameObject);
-        // }
+        public ICoinsManager CoinsManager { get; private set; }
 
-        protected override void OnServerStart()
+        [Server]
+        public void CollectCoin(uint id, int points)
         {
-            
+            Debug.LogWarning(GetHashCode());
+            if (points <= 0) return;
+
+            if (!_scores.TryAdd(id, points)) _scores[id] += points;
+
+            foreach (var pair in _scores)
+            {
+                Debug.LogWarning($"Player {pair.Key} collected coin({pair.Value} pts). Now: {_scores[pair.Key]} pts.");
+            }
+        }
+
+
+        [ClientRpc]
+        private void ShowScoresRpc()
+        {
+            foreach (var pair in _scores)
+            {
+                Debug.LogWarning("===");
+                Debug.LogWarning("Player " + pair.Key + " collected coin(" + pair.Value + "pts). Now: " +
+                                 _scores[pair.Key] + " pts.");
+                Debug.LogWarning("===");
+            }
         }
 
         protected override void LoadDependencies()
         {
             Debug.LogWarning("<color=red>InitDependencies in GameManager</color>");
-            // SpawnManager = dep.GetDependency<ISpawnManager>();
+            CoinsManager = dep.GetDependency<ICoinsManager>();
+            Debug.LogWarning("<color=red>CoinsManager: " + CoinsManager + "</color>");
         }
     }
 }

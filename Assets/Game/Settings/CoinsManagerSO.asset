@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7842a3c972334b2787f05293cd5bea6f, type: 3}
   m_Name: CoinsManagerSO
   m_EditorClassIdentifier: 
+  coinPrefab: {fileID: 2534726712456693111, guid: 68760df4807ab034ab7692afdc58d425, type: 3}
   pointsPerCoin: 5
   onStartSpawnDelaySeconds: 5
   spawnPointsCount: 8
