@@ -10,17 +10,16 @@ namespace Game.Scripts
     [RequireComponent(typeof(Rigidbody), typeof(Collider))]
     public sealed class PlayerCharacter : NetworkBehaviour
     {
-        public float MoveSpeed = 10f;
         [SerializeField] private Dep _dep;
         [SerializeField] private Camera _camera;
         [SerializeField] private Vector3 offset = new(-7, 15, -7);
-        [SerializeField] private float _moveSpeed = 10f;
+        [SerializeField] private float moveSpeed = 10f;
+        [SerializeField] private float rotationSpeed = 300f;
 
         private Rigidbody _rb;
         private IUserInput _input;
 
-
-        private Vector3 direction;
+        private Vector3 inputDirection;
         private readonly CompositeDisposable _disposables = new();
 
         private void Awake()
@@ -39,16 +38,9 @@ namespace Game.Scripts
             _input.MoveDirection.Subscribe(SetDirection).AddTo(_disposables);
         }
 
-        private void SetDirection(Vector3 dir)
-        {
-            if (!isLocalPlayer) return;
-            Debug.LogWarning("direction: " + dir);
-            direction = dir;
-        }
-
         private void FixedUpdate()
         {
-            if (!isLocalPlayer) return;
+            if (!isOwned) return;
 
             Move();
             Rotate();
@@ -57,7 +49,7 @@ namespace Game.Scripts
 
         private void Rotate()
         {
-            var side = direction.x;
+            var side = inputDirection.x;
 
             if (side == 0) return;
             var rotationAmount = side * rotationSpeed * Time.fixedDeltaTime;
@@ -69,49 +61,41 @@ namespace Game.Scripts
             if (_camera != null) _camera.transform.position = transform.position + offset;
         }
 
-        private float _currentSpeed = 0f; // Текущая скорость
-        private float maxSpeed = 10f; // Максимальная скорость
-        private float _acceleration = 3f; // Коэффициент ускорения (м/с^2)
-        private float _deceleration = 5f; // Коэффициент замедления
-        private float _reverseSpeed = 2f; // Скорость пятиться назад
-        private float _runTimeLimit = 3.5f; // Время до достижения максимальной скорости
-        private float _runTime = 0f; // Счётчик времени разгона
-        private float currentSpeed = 0f; // текущая скорость
-        private float acceleration; // ускорение
-        private float deceleration; // замедление
-        private float speed = 10f;
-        private float rotationSpeed = 300f;
+        private void SetDirection(Vector3 value) => inputDirection = value;
 
         private void Move()
         {
+            // forward 0 0 1 // back 0 0 -1 // right 1 0 0 // left -1 0 0
             var velocity = _rb.linearVelocity;
-            // forward 0 0 1
-            // back 0 0 -1
-            // right 1 0 0
-            // left -1 0 0
+            Vector3 newVelocity;
+            var forward = transform.forward;
 
-            // rotation 0
-            if (direction.x == 0)
+            if (inputDirection.x == 0)
             {
-                if (direction.z > 0)
+                if (inputDirection.z > 0)
                 {
-                    Debug.LogWarning("acceleration");
+                    // Debug.LogWarning("acceleration");
+                    newVelocity = forward * moveSpeed;
                 }
-                else if (direction.z < 0)
+                else if (inputDirection.z < 0)
                 {
-                    Debug.LogWarning("deceleration");
+                    // Debug.LogWarning("deceleration");
+                    newVelocity = -forward * moveSpeed;
                 }
                 else
                 {
-                    Debug.LogWarning("not acceleration / not deceleration");
+                    // Debug.LogWarning("not acceleration / not deceleration");
+                    newVelocity = new Vector3(0, velocity.y, 0);
                 }
             }
             else
             {
-                Debug.LogWarning("Moving with rotation without acceleration / deceleration");
-                var moveDirection = transform.forward * direction.z;
-                _rb.linearVelocity = new Vector3(moveDirection.x * speed, velocity.y, moveDirection.z * speed);
+                // Debug.LogWarning("Moving with rotation without acceleration / deceleration");
+                var dir = forward * inputDirection.z;
+                newVelocity = new Vector3(dir.x * moveSpeed, velocity.y, dir.z * moveSpeed);
             }
+
+            _rb.linearVelocity = newVelocity;
         }
 
         private void OnDestroy() => _disposables.Dispose();
