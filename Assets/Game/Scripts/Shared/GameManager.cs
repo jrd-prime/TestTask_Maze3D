@@ -10,6 +10,7 @@ namespace Game.Scripts.Shared
     {
         public ICoinsManager CoinsManager { get; }
         public void CollectCoin(uint id, int points);
+        void ShowScoresToClients();
     }
 
     public class GameManager : CustomNetworkBehaviour, IGameManager
@@ -22,30 +23,52 @@ namespace Game.Scripts.Shared
         public ICoinsManager CoinsManager { get; private set; }
 
         [Server]
-        public void CollectCoin(uint id, int points)
+        public void CollectCoin(uint playerId, int points)
         {
-            Debug.LogWarning(GetHashCode());
             if (points <= 0) return;
 
-            if (!_scores.TryAdd(id, points)) _scores[id] += points;
-
-            foreach (var pair in _scores)
+            // Проверяем наличие ключа в словаре
+            if (!_scores.ContainsKey(playerId))
             {
-                Debug.LogWarning($"Player {pair.Key} collected coin({pair.Value} pts). Now: {_scores[pair.Key]} pts.");
+                Debug.LogWarning($"Player {playerId} is not in the score list. Adding with initial score of 0.");
+                _scores[playerId] = 0; // Добавляем игрока с начальным значением очков
+            }
+
+            // Обновляем очки игрока
+            _scores[playerId] += points;
+
+            Debug.LogWarning($"Player {playerId} collected {points} pts. Total: {_scores[playerId]} pts.");
+        }
+
+        [Server]
+        public void ShowScoreToClient(NetworkConnection clientConnection, uint playerId)
+        {
+            if (_scores.TryGetValue(playerId, out int score))
+            {
+                ShowScoreForClientRpc(clientConnection, score);
+            }
+            else
+            {
+                Debug.LogWarning($"Player {playerId} has no score recorded.");
             }
         }
 
-
-        [ClientRpc]
-        private void ShowScoresRpc()
+        [Server]
+        public void ShowScoresToClients()
         {
+            var scoresList = new List<(uint id, int score)>(_scores.Count);
             foreach (var pair in _scores)
             {
-                Debug.LogWarning("===");
-                Debug.LogWarning("Player " + pair.Key + " collected coin(" + pair.Value + "pts). Now: " +
-                                 _scores[pair.Key] + " pts.");
-                Debug.LogWarning("===");
+                scoresList.Add((pair.Key, pair.Value));
             }
+        }
+
+        [TargetRpc]
+        private void ShowScoreForClientRpc(NetworkConnection target, int score)
+        {
+            Debug.LogWarning($"=== Score for You (Player {score}) ===");
+            Debug.LogWarning($"Your Score: {score} pts.");
+            Debug.LogWarning("=====================================");
         }
 
         protected override void LoadDependencies()

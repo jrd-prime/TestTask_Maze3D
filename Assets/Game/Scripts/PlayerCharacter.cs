@@ -23,6 +23,7 @@ namespace Game.Scripts
         private Vector3 inputDirection;
         private readonly CompositeDisposable _disposables = new();
         private IGameManager _gameManager;
+        private int pt;
 
         private void Awake()
         {
@@ -31,7 +32,7 @@ namespace Game.Scripts
 
         private void Start()
         {
-            if (!isOwned) return;
+            if (!isLocalPlayer) return;
             Debug.LogWarning("PlayerCharacter started.");
 
             LoadDependencies();
@@ -58,7 +59,7 @@ namespace Game.Scripts
 
         private void FixedUpdate()
         {
-            if (!isOwned) return;
+            if (!isLocalPlayer) return;
 
             Move();
             Rotate();
@@ -118,17 +119,32 @@ namespace Game.Scripts
 
         private void OnDestroy() => _disposables.Dispose();
 
+        [SyncVar] private int points; // Количество очков у игрока, синхронизируемое между сервером и клиентами.
 
-        public void CollectCoin(int points)
+        // Команда для добавления очков, вызываемая на сервере.
+        [Command]
+        public void CmdCollectCoin(int pointss)
         {
-            Debug.LogWarning($"PlayerCharacter collected coin ({points} pts).");
-            CmdCollectCoin(points);
+            // Логика добавления очков на сервере.
+            AddPoints(pointss);
+
+            // Обновление состояния на всех клиентах.
+            RpcUpdatePoints(pointss);
         }
 
-        [Command]
-        private void CmdCollectCoin(int points)
+        private void AddPoints(int pointsToAdd)
         {
-            _gameManager.CollectCoin(netId, points);
+            points += pointsToAdd;
+            Debug.Log($"Player {netId} collected a coin! New score: {points}");
+        }
+
+        // RPC для обновления очков на всех клиентах.
+        [ClientRpc]
+        private void RpcUpdatePoints(int newPoints)
+        {
+            points = newPoints;
+            // Здесь можно обновить UI или другие данные на клиенте.
+            Debug.Log($"Updated points on client: {points}");
         }
     }
 }

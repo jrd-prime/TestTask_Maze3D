@@ -20,14 +20,21 @@ namespace Game.Scripts.Coins
             {
                 Debug.LogWarning("collided with " + other.gameObject.layer);
                 var player = other.gameObject.GetComponent<PlayerCharacter>();
+
                 if (player == null)
                 {
-                    Debug.LogWarning("player is null");
+                    Debug.LogWarning("Player is null");
                     return;
                 }
 
-                player.CollectCoin(Points);
+                // Если это не хост или не владелец объекта, не выполняем действия
+                if (!player.authority)
+                {
+                    Debug.LogWarning("Player does not have authority to collect the coin.");
+                    return;
+                }
 
+                player.CmdCollectCoin(Points);
             }
         }
 
