@@ -119,32 +119,22 @@ namespace Game.Scripts
 
         private void OnDestroy() => _disposables.Dispose();
 
-        [SyncVar] private int points; // Количество очков у игрока, синхронизируемое между сервером и клиентами.
+        [SyncVar] private int score = 0; // Синхронизированное количество очков.
 
-        // Команда для добавления очков, вызываемая на сервере.
-        [Command]
-        public void CmdCollectCoin(int pointss)
+        // Метод для добавления очков игроку.
+        public void AddPoints(int points)
         {
-            // Логика добавления очков на сервере.
-            AddPoints(pointss);
+            if (!isServer) return; // Убедимся, что это выполняется только на сервере.
 
-            // Обновление состояния на всех клиентах.
-            RpcUpdatePoints(pointss);
+            score += points;
+            Debug.Log($"Player collected coin! New score: {score}");
         }
 
-        private void AddPoints(int pointsToAdd)
-        {
-            points += pointsToAdd;
-            Debug.Log($"Player {netId} collected a coin! New score: {points}");
-        }
-
-        // RPC для обновления очков на всех клиентах.
+        // В случае необходимости, можно синхронизировать очки с клиентами.
         [ClientRpc]
-        private void RpcUpdatePoints(int newPoints)
+        public void RpcUpdateScore(int newScore)
         {
-            points = newPoints;
-            // Здесь можно обновить UI или другие данные на клиенте.
-            Debug.Log($"Updated points on client: {points}");
+            score = newScore;
         }
     }
 }
