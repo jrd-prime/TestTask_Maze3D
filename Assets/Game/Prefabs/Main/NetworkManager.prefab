@@ -67,6 +67,8 @@ MonoBehaviour:
   - {fileID: 4455199414979588866, guid: 68760df4807ab034ab7692afdc58d425, type: 3}
   - {fileID: 6990702242228039501, guid: 24ce71f637ee5b746b4dc6f44994adf5, type: 3}
   - {fileID: 922988696862099734, guid: c099349bcf900df4dbced758e5248a59, type: 3}
+  - {fileID: 3833772733982700994, guid: 47cdd06a53a630d41a26c7acd50719db, type: 3}
+  - {fileID: 364288607643069417, guid: 18cd453042588384abca5b0f9f75cb3b, type: 3}
   exceptionsDisconnect: 1
   snapshotSettings:
     bufferTimeMultiplier: 2
@@ -83,7 +85,6 @@ MonoBehaviour:
   evaluationInterval: 3
   timeInterpolationGui: 0
   gameManager: {fileID: 2856973599743961896, guid: c099349bcf900df4dbced758e5248a59, type: 3}
-  dep: {fileID: 3811481385471002060, guid: e2bc35a3a729ba846a5816200fac5fc3, type: 3}
 --- !u!114 &3324458778176985065
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Mirror;
 using R3;
 using UnityEngine;
@@ -7,7 +8,7 @@ using UnityEngine.UIElements;
 namespace Game.Scripts.Client.UI
 {
     [RequireComponent(typeof(UIDocument))]
-    public class GameplayUI : MonoBehaviour
+    public class GameplayUI : NetworkBehaviour
     {
         [SerializeField] private PlayerCharacter playerCharacter;
 
@@ -19,13 +20,23 @@ namespace Game.Scripts.Client.UI
         private Label _scoreNum;
 
 
-        private void OnValidate()
+        protected override void OnValidate()
         {
             if (playerCharacter == null) throw new NullReferenceException(nameof(playerCharacter));
         }
 
-        private void Awake()
+        private async void Start()
         {
+            Debug.LogWarning("GameplayUI started.");
+            // if (!isClient) return;
+
+            playerCharacter = FindFirstObjectByType<PlayerCharacter>();
+            if (playerCharacter == null) await Task.Delay(1000); //TODO hack - wait for spawn playerCharacter
+            playerCharacter = FindFirstObjectByType<PlayerCharacter>();
+
+
+            Debug.LogWarning("awake GameplayUI on client  id = " + playerCharacter.netId);
+
             _root = GetComponent<UIDocument>().rootVisualElement;
 
             if (_root == null) throw new NullReferenceException(nameof(_root));
@@ -46,6 +57,7 @@ namespace Game.Scripts.Client.UI
         [Client]
         private void OnScoreChanged(int score)
         {
+            Debug.LogWarning("score changed to " + score);
             if (score < 0) return;
             _scoreNum.text = score.ToString();
         }

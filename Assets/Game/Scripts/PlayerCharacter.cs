@@ -21,7 +21,7 @@ namespace Game.Scripts
         private readonly CompositeDisposable _disposables = new();
         private GameManager _gameManager;
 
-        public ReactiveProperty<int> Score { get; } = new();
+        public ReactiveProperty<int> Score { get; } = new(0);
 
         [ClientCallback]
         private void Start()
@@ -55,6 +55,8 @@ namespace Game.Scripts
             Debug.LogWarning($"=== Score for You (Player {target}) ===");
             Debug.LogWarning($"Your Score: {score} pts.");
             Debug.LogWarning("=====================================");
+
+            if (Score.CurrentValue != score) Score.Value = score;
         }
 
         private void CameraFollow()

@@ -95,7 +95,7 @@ namespace Game.Scripts.Shared
 
             if (!scoreManager.GetCurrentScore(playerCharacter.netId, out var currentScore)) return;
 
-            playerCharacter.ShowScoreForClientRpc(playerCharacter.connectionToServer, currentScore);
+            playerCharacter.ShowScoreForClientRpc(playerCharacter.connectionToClient, currentScore);
         }
     }
 }
