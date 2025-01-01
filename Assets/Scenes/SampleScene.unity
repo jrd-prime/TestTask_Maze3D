@@ -799,6 +799,50 @@ Transform:
   - {fileID: 6438495876030997455}
   m_Father: {fileID: 1605045340}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2073125934
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2073125936}
+  - component: {fileID: 2073125935}
+  m_Layer: 0
+  m_Name: Input
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2073125935
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2073125934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9c2ad8b0cdc4317ae88e5f35abb388d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &2073125936
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2073125934}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2073185490
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -938,6 +982,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7080246041643786138, guid: 7b3d8dca12c232b4f97bdc7974fa4d4f, type: 3}
+      propertyPath: playerPrefab
+      value: 
+      objectReference: {fileID: 7559360012276616259, guid: ebb48eb3f4e4bfe4e8fd53e0b51b8493, type: 3}
+    - target: {fileID: 7080246041643786138, guid: 7b3d8dca12c232b4f97bdc7974fa4d4f, type: 3}
+      propertyPath: maxConnections
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7080246041643786138, guid: 7b3d8dca12c232b4f97bdc7974fa4d4f, type: 3}
+      propertyPath: autoCreatePlayer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7080246041643786138, guid: 7b3d8dca12c232b4f97bdc7974fa4d4f, type: 3}
+      propertyPath: spawnPrefabs.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7080246041643786138, guid: 7b3d8dca12c232b4f97bdc7974fa4d4f, type: 3}
+      propertyPath: 'spawnPrefabs.Array.data[3]'
+      value: 
+      objectReference: {fileID: 7559360012276616259, guid: ebb48eb3f4e4bfe4e8fd53e0b51b8493, type: 3}
     - target: {fileID: 8700424738751683621, guid: 7b3d8dca12c232b4f97bdc7974fa4d4f, type: 3}
       propertyPath: m_Name
       value: NetworkManager
@@ -1298,3 +1362,4 @@ SceneRoots:
   - {fileID: 214129699}
   - {fileID: 1081793291}
   - {fileID: 3954017415964089393}
+  - {fileID: 2073125936}

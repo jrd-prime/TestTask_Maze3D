@@ -27,8 +27,9 @@ namespace Game.Scripts.Manager
                 var coin = Instantiate(settings.coinPrefab, spawnPoint.position, Quaternion.identity);
                 coin.Initialize(settings.pointsPerCoin, transform);
                 NetworkServer.Spawn(coin.gameObject);
+
+                Debug.Log($"Coin spawned with netId: {coin.netId}");
             }
         }
-
     }
 }

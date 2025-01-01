@@ -1,6 +1,4 @@
-﻿using System;
-using Game.Scripts.Client.Input;
-using Game.Scripts.Help;
+﻿using Game.Scripts.Client.Input;
 using Game.Scripts.Shared;
 using Mirror;
 using R3;
@@ -21,17 +19,20 @@ namespace Game.Scripts
 
         private Vector3 inputDirection;
         private readonly CompositeDisposable _disposables = new();
-        private IGameManager _gameManager;
-        private int pt;
+        private GameManager _gameManager;
 
-        private void Awake()
-        {
-        }
-
+        [Client]
         private void Start()
         {
-            if (!isLocalPlayer) return;
-            Debug.LogWarning("PlayerCharacter started.");
+            if (!isOwned) return;
+
+            AssignAuthority(netIdentity);
+            Debug.LogWarning("PlayerCharacter started. ");
+
+            Debug.LogWarning("authority: " + authority);
+
+            _input = FindFirstObjectByType<PCUserInput>();
+            _gameManager = GameManager.Instance;
 
             _rb = GetComponent<Rigidbody>();
             _camera = Camera.main;
@@ -39,7 +40,11 @@ namespace Game.Scripts
             _input.MoveDirection.Subscribe(SetDirection).AddTo(_disposables);
         }
 
+        [Command(requiresAuthority = false)]
+        private void AssignAuthority(NetworkIdentity networkIdentity) =>
+            networkIdentity.AssignClientAuthority(connectionToClient);
 
+        [ClientCallback]
         private void FixedUpdate()
         {
             if (!isLocalPlayer) return;
@@ -49,21 +54,32 @@ namespace Game.Scripts
             CameraFollow();
         }
 
-        private void Rotate()
-        {
-            var side = inputDirection.x;
-
-            if (side == 0) return;
-            var rotationAmount = side * rotationSpeed * Time.fixedDeltaTime;
-            _rb.MoveRotation(_rb.rotation * Quaternion.Euler(0f, rotationAmount, 0f));
-        }
-
         private void CameraFollow()
         {
             if (_camera != null) _camera.transform.position = transform.position + offset;
         }
 
-        private void SetDirection(Vector3 value) => inputDirection = value;
+        [Command(requiresAuthority = false)]
+        public void CmdCollectCoin(uint id, int points)
+        {
+            if (!authority)
+            {
+                Debug.LogError("Command called on an object without authority!");
+                return;
+            }
+
+            Debug.Log($"CmdCollectCoin called: coinNetId = {id}, coinValue = {points}");
+            _gameManager.AddCoinsToPlayer(id, points);
+            ShowPlayerInfoRpc(points);
+        }
+
+        [ClientRpc]
+        private void ShowPlayerInfoRpc(int points)
+        {
+            if (!isLocalPlayer) return;
+
+            Debug.LogWarning("I collect! " + points);
+        }
 
         private void Move()
         {
@@ -74,25 +90,13 @@ namespace Game.Scripts
 
             if (inputDirection.x == 0)
             {
-                if (inputDirection.z > 0)
-                {
-                    // Debug.LogWarning("acceleration");
-                    newVelocity = forward * moveSpeed;
-                }
-                else if (inputDirection.z < 0)
-                {
-                    // Debug.LogWarning("deceleration");
-                    newVelocity = -forward * moveSpeed;
-                }
-                else
-                {
-                    // Debug.LogWarning("not acceleration / not deceleration");
-                    newVelocity = new Vector3(0, velocity.y, 0);
-                }
+                if (inputDirection.z > 0) newVelocity = forward * moveSpeed; // acceleration
+                else if (inputDirection.z < 0) newVelocity = -forward * moveSpeed; // deceleration
+                else newVelocity = new Vector3(0, velocity.y, 0); // not acceleration / not deceleration
             }
             else
             {
-                // Debug.LogWarning("Moving with rotation without acceleration / deceleration");
+                // Moving with rotation without acceleration / deceleration
                 var dir = forward * inputDirection.z;
                 newVelocity = new Vector3(dir.x * moveSpeed, velocity.y, dir.z * moveSpeed);
             }
@@ -100,24 +104,16 @@ namespace Game.Scripts
             _rb.linearVelocity = newVelocity;
         }
 
+        private void Rotate()
+        {
+            var side = inputDirection.x;
+            if (side == 0) return;
+            var rotationAmount = side * rotationSpeed * Time.fixedDeltaTime;
+            _rb.MoveRotation(_rb.rotation * Quaternion.Euler(0f, rotationAmount, 0f));
+        }
+
+        private void SetDirection(Vector3 value) => inputDirection = value;
+
         private void OnDestroy() => _disposables.Dispose();
-
-        [SyncVar] private int score = 0; // Синхронизированное количество очков.
-
-        // Метод для добавления очков игроку.
-        public void AddPoints(int points)
-        {
-            if (!isServer) return; // Убедимся, что это выполняется только на сервере.
-
-            score += points;
-            Debug.Log($"Player collected coin! New score: {score}");
-        }
-
-        // В случае необходимости, можно синхронизировать очки с клиентами.
-        [ClientRpc]
-        public void RpcUpdateScore(int newScore)
-        {
-            score = newScore;
-        }
     }
 }
