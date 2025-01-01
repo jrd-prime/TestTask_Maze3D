@@ -17,23 +17,22 @@ namespace Game.Scripts.Manager
     public class CoinsManager : NetworkBehaviour, ICoinsManager
     {
         [SerializeField] private CoinsManagerSO settings;
-        private CoinSpawner coinSpawner;
 
-        private readonly Queue<CoinBase> _coinsCache = new();
+        [SerializeField] private CoinSpawner _coinSpawner;
 
         private void Awake()
         {
             if (settings == null) throw new NullReferenceException(nameof(settings));
-            coinSpawner = new CoinSpawner(settings, transform);
+            if (_coinSpawner == null) throw new NullReferenceException(nameof(_coinSpawner));
         }
 
         private void Start()
         {
+            _coinSpawner.Initialize(settings);
+
+
             Debug.LogWarning("CoinsManager started.");
-
             StartCoroutine(SpawnFirstCoin());
-
-            InstantiateCoins();
         }
 
         private IEnumerator SpawnFirstCoin()
@@ -41,22 +40,13 @@ namespace Game.Scripts.Manager
             Debug.LogWarning("Spawning first coin pre delay.");
             yield return new WaitForSeconds(settings.onStartSpawnDelaySeconds);
             Debug.LogWarning("Spawning first coin.");
-            coinSpawner.SpawnCoin();
-        }
-
-
-        private void InstantiateCoins()
-        {
-            Debug.LogWarning("Instantiating coins.");
-
-            foreach (var spawnPoint in settings.spawnPoints)
-            {
-                var coin = Instantiate(settings.coinPrefab, spawnPoint.position, Quaternion.identity);
-                _coinsCache.Enqueue(coin);
-            }
+            SpawnCoin();
         }
 
         [Server]
-        public void UnSpawnCoin() => coinSpawner.UnSpawnCoin();
+        public void UnSpawnCoin() => _coinSpawner.UnSpawnCoin();
+
+        [Server]
+        public void SpawnCoin() => _coinSpawner.SpawnCoin();
     }
 }

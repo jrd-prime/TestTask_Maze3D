@@ -20,8 +20,6 @@ namespace Game.Scripts.Shared
         [SerializeField] private CoinsManager coinsManager;
         [SerializeField] private ScoreManager scoreManager;
 
-        private readonly Dictionary<uint, int> _scores = new();
-
         private GameManager()
         {
         }
@@ -42,49 +40,6 @@ namespace Game.Scripts.Shared
 
         [Server]
         public void UnSpawn(CoinBase go) => coinsManager.UnSpawnCoin();
-        //
-        // [Server]
-        // public void CollectCoin(uint playerId, int points)
-        // {
-        //     if (points <= 0) return;
-        //
-        //     // Проверяем наличие ключа в словаре
-        //     if (!_scores.ContainsKey(playerId))
-        //     {
-        //         Debug.LogWarning($"Player {playerId} is not in the score list. Adding with initial score of 0.");
-        //         _scores[playerId] = 0; // Добавляем игрока с начальным значением очков
-        //     }
-        //
-        //     // Обновляем очки игрока
-        //     _scores[playerId] += points;
-        //
-        //     Debug.LogWarning($"Player {playerId} collected {points} pts. Total: {_scores[playerId]} pts.");
-        // }
-
-        // [Server]
-        // public void ShowScoreToClient(NetworkConnection clientConnection, uint playerId)
-        // {
-        //     if (_scores.TryGetValue(playerId, out int score))
-        //     {
-        //         ShowScoreForClientRpc(clientConnection, score);
-        //     }
-        //     else
-        //     {
-        //         Debug.LogWarning($"Player {playerId} has no score recorded.");
-        //     }
-        // }
-
-        // [Server]
-        // public void ShowScoresToClients()
-        // {
-        //     var scoresList = new List<(uint id, int score)>(_scores.Count);
-        //     foreach (var pair in _scores)
-        //     {
-        //         scoresList.Add((pair.Key, pair.Value));
-        //     }
-        // }
-        //
-
 
         [Server]
         public void CollectCoin(CoinBase coin, PlayerCharacter playerCharacter, int points)
@@ -92,6 +47,7 @@ namespace Game.Scripts.Shared
             Debug.LogWarning($"add points {points} to player {playerCharacter} on server");
             scoreManager.AddPointsToPlayer(playerCharacter.netId, points);
             UnSpawn(coin);
+            coinsManager.SpawnCoin();
 
             if (!scoreManager.GetCurrentScore(playerCharacter.netId, out var currentScore)) return;
 

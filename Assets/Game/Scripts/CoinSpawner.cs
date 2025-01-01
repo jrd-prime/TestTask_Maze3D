@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Game.Scripts.Coins;
 using Game.Scripts.Data.SO;
@@ -9,40 +8,47 @@ using UnityEngine;
 
 namespace Game.Scripts
 {
-    public sealed class CoinSpawner
+    public sealed class CoinSpawner : NetworkBehaviour
     {
-        private readonly List<Transform> _spawnPoints;
-        private readonly CustomPool<Coin> _coinsPool;
-        private readonly Dictionary<Transform, float> _distanceCache = new();
+        private List<Transform> _spawnPoints;
+
+        private CustomPool<Coin> _coinsPool;
+        private Dictionary<Transform, float> _distanceCache = new();
 
         private Vector3 _lastPoint = Vector3.zero;
         private Coin _currentCoin;
-        private readonly CoinsManagerSO _settings;
-        private readonly Transform _parent;
+        private CoinsManagerSO _settings;
 
-        public CoinSpawner(CoinsManagerSO settings, Transform parent)
+        public void Initialize(CoinsManagerSO settings)
         {
             _settings = settings;
-            _parent = parent;
 
             _spawnPoints = _settings.spawnPoints;
-            _coinsPool = new CustomPool<Coin>(_settings.coinPrefab, _settings.spawnPointsCount, _parent);
+            _coinsPool = new CustomPool<Coin>(_settings.coinPrefab, _settings.spawnPointsCount,
+                new GameObject("CoinsPool").transform);
         }
 
         [Server]
         public void SpawnCoin()
         {
+            Debug.LogWarning("Coin Spawner: Spawn coin");
             _currentCoin = _coinsPool.Get();
-            _currentCoin.Initialize(_settings.pointsPerCoin, _parent);
-            _currentCoin.transform.position = GetSpawnPosition();
+            _currentCoin.Initialize(_settings.pointsPerCoin);
+
+            var position = GetSpawnPosition();
+            Debug.LogWarning("spawn position: " + position + " for coin: " + _currentCoin.gameObject.name);
+            _currentCoin.transform.position = position;
+            
             NetworkServer.Spawn(_currentCoin.gameObject);
         }
 
         [Server]
         public void UnSpawnCoin()
         {
+            Debug.LogWarning("Coin Spawner: Unspawn coin");
             _coinsPool.Return(_currentCoin);
             NetworkServer.UnSpawn(_currentCoin.gameObject);
+            _currentCoin = null;
         }
 
         private void CalcDistances(Vector3 targetPoint)
@@ -69,6 +75,6 @@ namespace Game.Scripts
 
 
         private static Vector3 GetRandomFromList(Transform[] points) =>
-            points[UnityEngine.Random.Range(0, points.Length)].position;
+            points[Random.Range(0, points.Length)].position;
     }
 }

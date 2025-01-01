@@ -43,13 +43,11 @@ namespace Game.Scripts.Coins
         void CmdCollectCoin(PlayerCharacter player, int points)
         {
             if (!isServer) return;
-            GameManager.CollectCoin(this,player, points);
-            GameManager.Instance.UnSpawn(this);
+            GameManager.CollectCoin(this, player, points);
         }
 
-        public void Initialize(int pointsPerCoin, Transform parent)
+        public void Initialize(int pointsPerCoin)
         {
-            transform.parent = parent;
             Points = pointsPerCoin;
             IsInitialized = true;
         }

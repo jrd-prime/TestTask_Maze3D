@@ -28,12 +28,13 @@ namespace Game.Scripts.Factory
 
         private void Initialize()
         {
-            for (var i = 0; i < _poolSize; i++) CreateObject();
+            for (var i = 0; i < _poolSize; i++) CreateObject(i);
         }
 
-        private void CreateObject()
+        private void CreateObject(int id)
         {
             var go = Object.Instantiate(_prefab, _parent);
+            go.name = $"{_prefab.name}_{id}";
             go.gameObject.SetActive(false);
             _cache.Enqueue(go);
         }
@@ -50,7 +51,7 @@ namespace Game.Scripts.Factory
 
             if (!_allowGrowth) throw new InvalidOperationException("Pool is empty and growth is not allowed!");
 
-            CreateObject();
+            CreateObject(_cache.Count + 1);
             var newObj = Get();
             return newObj;
         }
