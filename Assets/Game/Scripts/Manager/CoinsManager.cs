@@ -65,5 +65,11 @@ namespace Game.Scripts.Manager
             _coinsCache.Enqueue(coinBase);
             NetworkServer.UnSpawn(coinBase.gameObject);
         }
+
+        [Server]
+        public void AddPointsToPlayer(uint playerCharacterNetId, int points)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

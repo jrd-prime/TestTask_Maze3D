@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Game.Scripts.Coins;
 using Game.Scripts.Help;
 using Game.Scripts.Manager;
 using Mirror;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Game.Scripts.Shared
 {
@@ -13,20 +15,16 @@ namespace Game.Scripts.Shared
 
     public class GameManager : CustomNetworkBehaviour, IGameManager
     {
-        [SerializeField] private CoinsManager CoinsManager;
+        public static GameManager Instance { get; private set; }
+
+        [SerializeField] private CoinsManager coinsManager;
+        [SerializeField] private ScoreManager scoreManager;
 
         private readonly Dictionary<uint, int> _scores = new();
-
 
         private GameManager()
         {
         }
-
-        [Server]
-        public void UnSpawn(CoinBase go) => CoinsManager.UnSpawnCoin(go);
-
-
-        public static GameManager Instance { get; private set; }
 
         private void Awake()
         {
@@ -37,7 +35,13 @@ namespace Game.Scripts.Shared
             }
 
             Instance = this;
+
+            if (coinsManager == null) throw new NullReferenceException(nameof(coinsManager));
+            if (scoreManager == null) throw new NullReferenceException(nameof(scoreManager));
         }
+
+        [Server]
+        public void UnSpawn(CoinBase go) => coinsManager.UnSpawnCoin(go);
         //
         // [Server]
         // public void CollectCoin(uint playerId, int points)
@@ -80,18 +84,18 @@ namespace Game.Scripts.Shared
         //     }
         // }
         //
-        // [TargetRpc]
-        // private void ShowScoreForClientRpc(NetworkConnection target, int score)
-        // {
-        //     Debug.LogWarning($"=== Score for You (Player {score}) ===");
-        //     Debug.LogWarning($"Your Score: {score} pts.");
-        //     Debug.LogWarning("=====================================");
-        // }
+
 
         [Server]
-        public void AddCoinsToPlayer(uint u, int points)
+        public void CollectCoin(CoinBase coin, PlayerCharacter playerCharacter, int points)
         {
-            Debug.LogWarning("add coins to player on server");
+            Debug.LogWarning($"add points {points} to player {playerCharacter} on server");
+            scoreManager.AddPointsToPlayer(playerCharacter.netId, points);
+            UnSpawn(coin);
+
+            if (!scoreManager.GetCurrentScore(playerCharacter.netId, out var currentScore)) return;
+
+            playerCharacter.ShowScoreForClientRpc(playerCharacter.connectionToServer, currentScore);
         }
     }
 }

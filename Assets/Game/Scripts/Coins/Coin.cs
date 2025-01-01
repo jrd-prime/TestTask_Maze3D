@@ -28,38 +28,23 @@ namespace Game.Scripts.Coins
             if (player == null) throw new NullReferenceException("Player not found!");
 
 
-            if (isClient && NetworkClient.isConnected) // Убедитесь, что клиент активен и подключен
+            if (isClient && NetworkClient.isConnected)
             {
-                CmdCollectCoin();
+                CmdCollectCoin(player, Points);
             }
             else
             {
                 Debug.LogWarning("Клиент не активен или не подключен.");
             }
-
-            // if (player.isLocalPlayer)
-            // {
-            //     Debug.LogWarning("its local player");
-            //     player.CmdCollectCoin(player.netId, Points);
-            // }
-            // else
-            // {
-            //     Debug.LogWarning("Cannot call command from a non-local player.");
-            // }
         }
 
+
         [Command(requiresAuthority = false)]
-        void CmdCollectCoin()
+        void CmdCollectCoin(PlayerCharacter player, int points)
         {
-            if (isServer) // Убедитесь, что код выполняется на сервере
-            {
-                Debug.LogWarning("Попытка вызвать серверную функцию на сервере.");
-                GameManager.Instance.UnSpawn(this);
-            }
-            else
-            {
-                Debug.LogWarning("Попытка вызвать серверную функцию на клиенте.");
-            }
+            if (!isServer) return;
+            GameManager.CollectCoin(this,player, points);
+            GameManager.Instance.UnSpawn(this);
         }
 
         public void Initialize(int pointsPerCoin, Transform parent)

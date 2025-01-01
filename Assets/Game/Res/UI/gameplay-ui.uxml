@@ -1,0 +1,8 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <engine:VisualElement name="main-cont" style="flex-grow: 1; position: absolute; top: 0; left: 0; right: 0; bottom: 0;">
+        <engine:VisualElement name="score-cont" style="flex-grow: 1; position: absolute; top: 32px; left: 32px; width: 150px; height: 50px; flex-direction: row; background-color: rgba(0, 0, 0, 0.3); color: rgb(255, 255, 255); font-size: 20px; -unity-text-align: middle-center; border-top-left-radius: 12px; border-top-right-radius: 12px; border-bottom-right-radius: 12px; border-bottom-left-radius: 12px;">
+            <engine:Label text="SCORE" name="score-head" style="position: absolute; top: 0; left: 0; bottom: 0; width: 90px; height: 50px; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0;" />
+            <engine:Label text="999" name="score-num" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; position: absolute; top: 0; right: 0; bottom: 0; width: 60px; height: 50px; border-top-left-radius: 12px; border-top-right-radius: 12px; border-bottom-right-radius: 12px; border-bottom-left-radius: 12px; background-color: rgba(0, 0, 0, 0.3);" />
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>

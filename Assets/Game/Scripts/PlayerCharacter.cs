@@ -9,19 +9,21 @@ namespace Game.Scripts
     [RequireComponent(typeof(Rigidbody), typeof(Collider))]
     public sealed class PlayerCharacter : NetworkBehaviour
     {
-        [SerializeField] private Camera _camera;
         [SerializeField] private Vector3 offset = new(-7, 15, -7);
         [SerializeField] private float moveSpeed = 10f;
         [SerializeField] private float rotationSpeed = 300f;
 
+        private Camera _camera;
         private Rigidbody _rb;
         private IUserInput _input;
 
-        private Vector3 inputDirection;
+        private Vector3 _inputDirection;
         private readonly CompositeDisposable _disposables = new();
         private GameManager _gameManager;
 
+        public ReactiveProperty<int> Score { get; } = new();
 
+        [ClientCallback]
         private void Start()
         {
             if (!isOwned) return;
@@ -47,31 +49,17 @@ namespace Game.Scripts
             CameraFollow();
         }
 
+        [TargetRpc]
+        public void ShowScoreForClientRpc(NetworkConnection target, int score)
+        {
+            Debug.LogWarning($"=== Score for You (Player {target}) ===");
+            Debug.LogWarning($"Your Score: {score} pts.");
+            Debug.LogWarning("=====================================");
+        }
+
         private void CameraFollow()
         {
-            if (_camera != null) _camera.transform.position = transform.position + offset;
-        }
-
-        [Command(requiresAuthority = false)]
-        public void CmdCollectCoin(uint id, int points)
-        {
-            if (!authority)
-            {
-                Debug.LogError("Command called on an object without authority!");
-                return;
-            }
-
-            Debug.Log($"CmdCollectCoin called: coinNetId = {id}, coinValue = {points}");
-            // _gameManager.AddCoinsToPlayer(id, points);
-            ShowPlayerInfoRpc(points);
-        }
-
-        [ClientRpc]
-        private void ShowPlayerInfoRpc(int points)
-        {
-            if (!isLocalPlayer) return;
-
-            Debug.LogWarning("I collect! " + points);
+            if (_camera is not null) _camera.transform.position = transform.position + offset;
         }
 
         private void Move()
@@ -81,16 +69,16 @@ namespace Game.Scripts
             Vector3 newVelocity;
             var forward = transform.forward;
 
-            if (inputDirection.x == 0)
+            if (_inputDirection.x == 0)
             {
-                if (inputDirection.z > 0) newVelocity = forward * moveSpeed; // acceleration
-                else if (inputDirection.z < 0) newVelocity = -forward * moveSpeed; // deceleration
+                if (_inputDirection.z > 0) newVelocity = forward * moveSpeed; // acceleration
+                else if (_inputDirection.z < 0) newVelocity = -forward * moveSpeed; // deceleration
                 else newVelocity = new Vector3(0, velocity.y, 0); // not acceleration / not deceleration
             }
             else
             {
                 // Moving with rotation without acceleration / deceleration
-                var dir = forward * inputDirection.z;
+                var dir = forward * _inputDirection.z;
                 newVelocity = new Vector3(dir.x * moveSpeed, velocity.y, dir.z * moveSpeed);
             }
 
@@ -99,13 +87,13 @@ namespace Game.Scripts
 
         private void Rotate()
         {
-            var side = inputDirection.x;
+            var side = _inputDirection.x;
             if (side == 0) return;
             var rotationAmount = side * rotationSpeed * Time.fixedDeltaTime;
             _rb.MoveRotation(_rb.rotation * Quaternion.Euler(0f, rotationAmount, 0f));
         }
 
-        private void SetDirection(Vector3 value) => inputDirection = value;
+        private void SetDirection(Vector3 value) => _inputDirection = value;
 
         private void OnDestroy() => _disposables.Dispose();
     }

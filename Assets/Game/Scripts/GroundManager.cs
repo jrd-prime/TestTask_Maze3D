@@ -13,7 +13,6 @@ namespace Game.Scripts
         [SerializeField] private GameObject holePrefab;
         [SerializeField] private GameObject wallPrefab;
 
-
         private void Start()
         {
             if (floorCombined == null || holesCombined == null || wallsCombined == null)
@@ -24,9 +23,6 @@ namespace Game.Scripts
 
                 throw new Exception("You need to set generated combined objects!");
             }
-
-            Debug.LogWarning("Combined objects was generated and set");
-
             // Instantiate(floorCombined, transform);
             // Instantiate(holesCombined, transform);
             // Instantiate(wallsCombined, transform);
