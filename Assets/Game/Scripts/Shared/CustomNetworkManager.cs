@@ -8,7 +8,6 @@ namespace Game.Scripts.Shared
     public class CustomNetworkManager : NetworkManager
     {
         [SerializeField] private GameManager gameManager;
-        [SerializeField] private Dep dep;
 
         public override void OnStartHost()
         {

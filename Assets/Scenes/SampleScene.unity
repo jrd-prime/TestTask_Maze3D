@@ -1023,6 +1023,10 @@ PrefabInstance:
       propertyPath: sceneId
       value: 2739947656
       objectReference: {fileID: 0}
+    - target: {fileID: 3655869077674397417, guid: 24ce71f637ee5b746b4dc6f44994adf5, type: 3}
+      propertyPath: serverOnly
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6990702242228039501, guid: 24ce71f637ee5b746b4dc6f44994adf5, type: 3}
       propertyPath: m_Name
       value: CoinsManager

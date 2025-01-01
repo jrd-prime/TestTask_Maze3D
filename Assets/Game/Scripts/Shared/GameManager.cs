@@ -16,7 +16,6 @@ namespace Game.Scripts.Shared
     public class GameManager : CustomNetworkBehaviour, IGameManager
     {
         [SerializeField] private PlayerCharacter playerPrefab;
-        [SerializeField] private Dep dep;
 
         private readonly Dictionary<uint, int> _scores = new();
 
@@ -69,13 +68,6 @@ namespace Game.Scripts.Shared
             Debug.LogWarning($"=== Score for You (Player {score}) ===");
             Debug.LogWarning($"Your Score: {score} pts.");
             Debug.LogWarning("=====================================");
-        }
-
-        protected override void LoadDependencies()
-        {
-            Debug.LogWarning("<color=red>InitDependencies in GameManager</color>");
-            CoinsManager = dep.GetDependency<ICoinsManager>();
-            Debug.LogWarning("<color=red>CoinsManager: " + CoinsManager + "</color>");
         }
     }
 }

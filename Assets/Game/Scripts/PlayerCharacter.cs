@@ -11,7 +11,6 @@ namespace Game.Scripts
     [RequireComponent(typeof(Rigidbody), typeof(Collider))]
     public sealed class PlayerCharacter : NetworkBehaviour
     {
-        [SerializeField] private Dep _dep;
         [SerializeField] private Camera _camera;
         [SerializeField] private Vector3 offset = new(-7, 15, -7);
         [SerializeField] private float moveSpeed = 10f;
@@ -27,7 +26,6 @@ namespace Game.Scripts
 
         private void Awake()
         {
-            if (_dep == null) throw new NullReferenceException(nameof(_dep));
         }
 
         private void Start()
@@ -35,27 +33,12 @@ namespace Game.Scripts
             if (!isLocalPlayer) return;
             Debug.LogWarning("PlayerCharacter started.");
 
-            LoadDependencies();
-
-            if (isServer) LoadServerDependencies();
-
             _rb = GetComponent<Rigidbody>();
             _camera = Camera.main;
 
             _input.MoveDirection.Subscribe(SetDirection).AddTo(_disposables);
         }
 
-        private void LoadDependencies()
-        {
-            _input = _dep.GetDependency<IUserInput>();
-        }
-
-        [Server]
-        private void LoadServerDependencies()
-        {
-            _gameManager = _dep.GetDependency<IGameManager>();
-            Debug.LogWarning("_gameManager: " + _gameManager.GetHashCode());
-        }
 
         private void FixedUpdate()
         {
