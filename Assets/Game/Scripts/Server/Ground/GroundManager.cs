@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Game.Scripts
+namespace Game.Scripts.Server
 {
     public class GroundManager : MonoBehaviour
     {

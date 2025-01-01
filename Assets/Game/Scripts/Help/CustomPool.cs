@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using VContainer;
 using Object = UnityEngine.Object;
 
-namespace Game.Scripts.Factory
+namespace Game.Scripts.Server
 {
     public class CustomPool<T> where T : MonoBehaviour
     {

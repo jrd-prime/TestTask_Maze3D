@@ -1,9 +1,9 @@
 ﻿using System;
-using Game.Scripts.Shared;
+using Game.Scripts.Server;
 using Mirror;
 using UnityEngine;
 
-namespace Game.Scripts.Coins
+namespace Game.Scripts.Shared.Coins
 {
     [RequireComponent(typeof(Collider))]
     public abstract class CoinBase : NetworkBehaviour

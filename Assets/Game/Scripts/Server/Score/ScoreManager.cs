@@ -2,7 +2,7 @@
 using Mirror;
 using UnityEngine;
 
-namespace Game.Scripts.Manager
+namespace Game.Scripts.Server
 {
     public class ScoreManager : NetworkBehaviour
     {

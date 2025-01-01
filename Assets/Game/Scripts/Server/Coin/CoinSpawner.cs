@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Game.Scripts.Coins;
 using Game.Scripts.Data.SO;
-using Game.Scripts.Factory;
+using Game.Scripts.Shared.Coins;
 using Mirror;
 using UnityEngine;
 
-namespace Game.Scripts
+namespace Game.Scripts.Server
 {
     public sealed class CoinSpawner : NetworkBehaviour
     {

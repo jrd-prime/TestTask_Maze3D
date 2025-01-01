@@ -1,10 +1,9 @@
 ﻿using Game.Scripts.Client.Input;
-using Game.Scripts.Shared;
 using Mirror;
 using R3;
 using UnityEngine;
 
-namespace Game.Scripts
+namespace Game.Scripts.Client
 {
     [RequireComponent(typeof(Rigidbody), typeof(Collider))]
     public sealed class PlayerCharacter : NetworkBehaviour
@@ -19,7 +18,6 @@ namespace Game.Scripts
 
         private Vector3 _inputDirection;
         private readonly CompositeDisposable _disposables = new();
-        private GameManager _gameManager;
 
         public ReactiveProperty<int> Score { get; } = new(0);
 
@@ -27,12 +25,9 @@ namespace Game.Scripts
         private void Start()
         {
             if (!isOwned) return;
-
             Debug.LogWarning("PlayerCharacter started.");
 
             _input = FindFirstObjectByType<PCUserInput>();
-            _gameManager = GameManager.Instance;
-
             _rb = GetComponent<Rigidbody>();
             _camera = Camera.main;
 
@@ -52,9 +47,7 @@ namespace Game.Scripts
         [TargetRpc]
         public void ShowScoreForClientRpc(NetworkConnection target, int score)
         {
-            Debug.LogWarning($"=== Score for You (Player {target}) ===");
             Debug.LogWarning($"Your Score: {score} pts.");
-            Debug.LogWarning("=====================================");
 
             if (Score.CurrentValue != score) Score.Value = score;
         }

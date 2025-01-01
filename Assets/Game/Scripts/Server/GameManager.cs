@@ -1,19 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using Game.Scripts.Coins;
-using Game.Scripts.Help;
-using Game.Scripts.Manager;
+using Game.Scripts.Client;
+using Game.Scripts.Shared.Coins;
 using Mirror;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace Game.Scripts.Shared
+namespace Game.Scripts.Server
 {
-    public interface IGameManager
-    {
-    }
-
-    public class GameManager : CustomNetworkBehaviour, IGameManager
+    public sealed class GameManager : NetworkBehaviour
     {
         public static GameManager Instance { get; private set; }
 

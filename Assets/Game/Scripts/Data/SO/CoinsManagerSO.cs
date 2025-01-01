@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Game.Scripts.Coins;
+using Game.Scripts.Shared.Coins;
 using UnityEngine;
 
 namespace Game.Scripts.Data.SO

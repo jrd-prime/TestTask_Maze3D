@@ -1,9 +1,11 @@
-﻿namespace Game.Scripts.Help
+﻿using System.IO;
+using UnityEngine;
+
+namespace Game.Scripts.Help
 {
 #if UNITY_EDITOR
     using UnityEditor;
 #endif
-    using UnityEngine;
 
     public class MeshSaver : MonoBehaviour
     {
@@ -11,9 +13,9 @@
         {
 #if UNITY_EDITOR
             // Убедимся, что папка существует
-            if (!System.IO.Directory.Exists(path))
+            if (!Directory.Exists(path))
             {
-                System.IO.Directory.CreateDirectory(path);
+                Directory.CreateDirectory(path);
             }
 
             // Путь к файлу

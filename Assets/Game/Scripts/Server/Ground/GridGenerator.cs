@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Game.Scripts.Help;
 using UnityEngine;
 
-namespace Game.Scripts
+namespace Game.Scripts.Server
 {
     public class GridGenerator
     {

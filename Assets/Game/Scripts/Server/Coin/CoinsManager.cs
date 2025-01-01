@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using Game.Scripts.Coins;
 using Game.Scripts.Data.SO;
 using Mirror;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
-namespace Game.Scripts.Manager
+namespace Game.Scripts.Server
 {
     public interface ICoinsManager
     {

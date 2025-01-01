@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Game.Scripts
+namespace Game.Scripts.Shared
 {
     [RequireComponent(typeof(BoxCollider))]
     public class Hole : MonoBehaviour

@@ -1,9 +1,9 @@
 ﻿using System;
-using Game.Scripts.Shared;
+using Game.Scripts.Client;
 using Mirror;
 using UnityEngine;
 
-namespace Game.Scripts.Coins
+namespace Game.Scripts.Shared.Coins
 {
     public class Coin : CoinBase
     {
