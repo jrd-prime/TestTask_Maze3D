@@ -10,7 +10,7 @@ namespace Game.Scripts.Client.UI
     [RequireComponent(typeof(UIDocument))]
     public class GameplayUI : NetworkBehaviour
     {
-        [SerializeField] private PlayerCharacter playerCharacter;
+        private PlayerCharacter _playerCharacter;
 
 
         private VisualElement _root;
@@ -19,23 +19,15 @@ namespace Game.Scripts.Client.UI
         private Label _scoreHead;
         private Label _scoreNum;
 
-
-        protected override void OnValidate()
-        {
-            if (playerCharacter == null) throw new NullReferenceException(nameof(playerCharacter));
-        }
-
         private async void Start()
         {
             Debug.LogWarning("GameplayUI started.");
-            // if (!isClient) return;
 
-            playerCharacter = FindFirstObjectByType<PlayerCharacter>();
-            if (playerCharacter == null) await Task.Delay(1000); //TODO hack - wait for spawn playerCharacter
-            playerCharacter = FindFirstObjectByType<PlayerCharacter>();
+            if (_playerCharacter == null) await Task.Delay(1000); // hack - wait for spawn playerCharacter
 
-
-            Debug.LogWarning("awake GameplayUI on client  id = " + playerCharacter.netId);
+            _playerCharacter = FindFirstObjectByType<PlayerCharacter>();
+            
+            Debug.LogWarning("awake GameplayUI on client  id = " + _playerCharacter.netId);
 
             _root = GetComponent<UIDocument>().rootVisualElement;
 
@@ -51,7 +43,7 @@ namespace Game.Scripts.Client.UI
             _scoreNum.text = "0";
 
 
-            playerCharacter.Score.Subscribe(OnScoreChanged).AddTo(_disposables);
+            _playerCharacter.Score.Subscribe(OnScoreChanged).AddTo(_disposables);
         }
 
         [Client]

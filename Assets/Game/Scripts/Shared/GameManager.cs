@@ -41,7 +41,7 @@ namespace Game.Scripts.Shared
         }
 
         [Server]
-        public void UnSpawn(CoinBase go) => coinsManager.UnSpawnCoin(go);
+        public void UnSpawn(CoinBase go) => coinsManager.UnSpawnCoin();
         //
         // [Server]
         // public void CollectCoin(uint playerId, int points)

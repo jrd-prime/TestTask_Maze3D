@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Game.Scripts.Coins;
@@ -16,28 +17,33 @@ namespace Game.Scripts.Manager
     public class CoinsManager : NetworkBehaviour, ICoinsManager
     {
         [SerializeField] private CoinsManagerSO settings;
+        private CoinSpawner coinSpawner;
 
         private readonly Queue<CoinBase> _coinsCache = new();
 
         private void Awake()
         {
             if (settings == null) throw new NullReferenceException(nameof(settings));
+            coinSpawner = new CoinSpawner(settings, transform);
         }
 
         private void Start()
         {
             Debug.LogWarning("CoinsManager started.");
+
+            StartCoroutine(SpawnFirstCoin());
+
             InstantiateCoins();
-            SpawnAllCoins();
         }
 
-        [Server]
-        private void SpawnAllCoins()
+        private IEnumerator SpawnFirstCoin()
         {
-            Debug.LogWarning("Spawning all coins.");
-            var coinsList = _coinsCache.ToArray();
-            for (var i = 0; i < coinsList.Length; i++) SpawnCoin();
+            Debug.LogWarning("Spawning first coin pre delay.");
+            yield return new WaitForSeconds(settings.onStartSpawnDelaySeconds);
+            Debug.LogWarning("Spawning first coin.");
+            coinSpawner.SpawnCoin();
         }
+
 
         private void InstantiateCoins()
         {
@@ -46,30 +52,11 @@ namespace Game.Scripts.Manager
             foreach (var spawnPoint in settings.spawnPoints)
             {
                 var coin = Instantiate(settings.coinPrefab, spawnPoint.position, Quaternion.identity);
-                coin.Initialize(settings.pointsPerCoin, transform);
                 _coinsCache.Enqueue(coin);
             }
         }
 
         [Server]
-        private void SpawnCoin()
-        {
-            var coin = _coinsCache.Dequeue();
-            NetworkServer.Spawn(coin.gameObject);
-        }
-
-
-        [Server]
-        public void UnSpawnCoin(CoinBase coinBase)
-        {
-            _coinsCache.Enqueue(coinBase);
-            NetworkServer.UnSpawn(coinBase.gameObject);
-        }
-
-        [Server]
-        public void AddPointsToPlayer(uint playerCharacterNetId, int points)
-        {
-            throw new NotImplementedException();
-        }
+        public void UnSpawnCoin() => coinSpawner.UnSpawnCoin();
     }
 }
