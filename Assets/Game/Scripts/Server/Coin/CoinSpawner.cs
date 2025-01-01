@@ -1,21 +1,21 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Game.Scripts.Data.SO;
-using Game.Scripts.Shared.Coins;
+using Game.Scripts.Help;
 using Mirror;
 using UnityEngine;
 
-namespace Game.Scripts.Server
+namespace Game.Scripts.Server.Coin
 {
     public sealed class CoinSpawner : NetworkBehaviour
     {
         private List<Transform> _spawnPoints;
 
-        private CustomPool<Coin> _coinsPool;
+        private CustomPool<Shared.Coins.Coin> _coinsPool;
         private Dictionary<Transform, float> _distanceCache = new();
 
         private Vector3 _lastPoint = Vector3.zero;
-        private Coin _currentCoin;
+        private Shared.Coins.Coin _currentCoin;
         private CoinsManagerSO _settings;
 
         public void Initialize(CoinsManagerSO settings)
@@ -23,7 +23,7 @@ namespace Game.Scripts.Server
             _settings = settings;
 
             _spawnPoints = _settings.spawnPoints;
-            _coinsPool = new CustomPool<Coin>(_settings.coinPrefab, _settings.spawnPointsCount,
+            _coinsPool = new CustomPool<Shared.Coins.Coin>(_settings.coinPrefab, _settings.spawnPointsCount,
                 new GameObject("CoinsPool").transform);
         }
 
@@ -36,8 +36,8 @@ namespace Game.Scripts.Server
 
             var position = GetSpawnPosition();
             Debug.LogWarning("spawn position: " + position + " for coin: " + _currentCoin.gameObject.name);
-            _currentCoin.transform.position = position;
-            
+            _currentCoin.transform.position = position + new Vector3(0, 1, 0);
+
             NetworkServer.Spawn(_currentCoin.gameObject);
         }
 

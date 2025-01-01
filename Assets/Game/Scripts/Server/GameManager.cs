@@ -1,5 +1,7 @@
 ﻿using System;
 using Game.Scripts.Client;
+using Game.Scripts.Server.Coin;
+using Game.Scripts.Server.Score;
 using Game.Scripts.Shared.Coins;
 using Mirror;
 using UnityEngine;

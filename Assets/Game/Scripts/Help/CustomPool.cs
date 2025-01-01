@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Game.Scripts.Server
+namespace Game.Scripts.Help
 {
     public class CustomPool<T> where T : MonoBehaviour
     {

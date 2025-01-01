@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Game.Scripts.Help;
 using UnityEngine;
 
-namespace Game.Scripts.Server
+namespace Game.Scripts.Server.Ground
 {
     public class GridGenerator
     {
@@ -14,7 +14,8 @@ namespace Game.Scripts.Server
         private readonly int _tilesPerGridY = 18;
         private readonly Transform _parent;
 
-        private List<Vector2> _holes;
+        private readonly List<Vector2> _holes = new();
+        private readonly List<Vector2> _walls = new();
 
         public GridGenerator(Camera camera, GameObject tilePrefab, GameObject holePrefab, GameObject wallPrefab,
             int tilesPerGridX,
@@ -28,17 +29,19 @@ namespace Game.Scripts.Server
             _tilesPerGridY = tilesPerGridY * 2;
             _camera = camera;
             _parent = parent;
-
-            _holes = new List<Vector2>();
         }
 
-        public void GenerateGrid()
+        public void GenerateGrid(Transform[] additionalWallPoints, Transform[] additionalHolePoints)
         {
-            _holes.Add(new Vector2(5, 16));
-            _holes.Add(new Vector2(7, 6));
-            _holes.Add(new Vector2(10, 7));
-            _holes.Add(new Vector2(14, 12));
-            _holes.Add(new Vector2(22, 13));
+            foreach (var holePoint in additionalHolePoints)
+            {
+                _holes.Add(new Vector2() { x = holePoint.position.x, y = holePoint.position.z });
+            }
+
+            foreach (var wallPoint in additionalWallPoints)
+            {
+                _walls.Add(new Vector2() { x = wallPoint.position.x, y = wallPoint.position.z });
+            }
 
             var tileSize = 4.0f;
             List<MeshFilter> meshFilters = new();
@@ -48,8 +51,10 @@ namespace Game.Scripts.Server
             {
                 for (var y = 0; y < _tilesPerGridY; y++)
                 {
-                    if (x == 0 || x == _tilesPerGridX - 1 || y == 0 || y == _tilesPerGridY - 1)
+                    if (x == 0 || x == _tilesPerGridX - 1 || y == 0 || y == _tilesPerGridY - 1 ||
+                        _walls.Contains(new Vector2(x * tileSize, y * tileSize)))
                     {
+                        Debug.LogWarning("wall point: " + new Vector2(x * tileSize, y * tileSize));
                         Vector3 wallPosition = new(x * tileSize, 0, y * tileSize);
                         var wall = Object.Instantiate(_wallPrefab, wallPosition, Quaternion.identity, _parent);
                         var wallMeshFilters = wall.GetComponentsInChildren<MeshFilter>();
@@ -62,7 +67,7 @@ namespace Game.Scripts.Server
                         continue;
                     }
 
-                    if (_holes.Contains(new Vector2(x, y)))
+                    if (_holes.Contains(new Vector2(x * tileSize, y * tileSize)))
                     {
                         Vector3 holePosition = new(x * tileSize, 0, y * tileSize);
                         var hole = Object.Instantiate(_holePrefab, holePosition, Quaternion.identity, _parent);
@@ -200,8 +205,8 @@ namespace Game.Scripts.Server
                 //
                 // boxCollider.size = new Vector3(4.0f * _tilesPerGridX, 1.0f, 4.0f * _tilesPerGridY);
                 // boxCollider.center = new Vector3((_tilesPerGridX * 4.0f) / 2, -2.5f, (_tilesPerGridY * 4.0f) / 2);
-
-                combinedObject.layer = LayerMask.NameToLayer("Holes");
+                //
+                // combinedObject.layer = LayerMask.NameToLayer("Holes");
             }
 
             PrefabSaver.SaveAsPrefab(combinedObject, "Assets/Generated/Prefabs");

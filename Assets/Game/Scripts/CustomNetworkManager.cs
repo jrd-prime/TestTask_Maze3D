@@ -1,7 +1,8 @@
-﻿using Mirror;
+﻿using Game.Scripts.Server;
+using Mirror;
 using UnityEngine;
 
-namespace Game.Scripts.Server
+namespace Game.Scripts
 {
     public class CustomNetworkManager : NetworkManager
     {

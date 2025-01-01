@@ -5,7 +5,7 @@ using Mirror;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
-namespace Game.Scripts.Server
+namespace Game.Scripts.Server.Coin
 {
     public interface ICoinsManager
     {
