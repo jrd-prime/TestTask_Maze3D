@@ -21,15 +21,12 @@ namespace Game.Scripts
         private readonly CompositeDisposable _disposables = new();
         private GameManager _gameManager;
 
-        [Client]
+
         private void Start()
         {
             if (!isOwned) return;
 
-            AssignAuthority(netIdentity);
-            Debug.LogWarning("PlayerCharacter started. ");
-
-            Debug.LogWarning("authority: " + authority);
+            Debug.LogWarning("PlayerCharacter started.");
 
             _input = FindFirstObjectByType<PCUserInput>();
             _gameManager = GameManager.Instance;
@@ -39,10 +36,6 @@ namespace Game.Scripts
 
             _input.MoveDirection.Subscribe(SetDirection).AddTo(_disposables);
         }
-
-        [Command(requiresAuthority = false)]
-        private void AssignAuthority(NetworkIdentity networkIdentity) =>
-            networkIdentity.AssignClientAuthority(connectionToClient);
 
         [ClientCallback]
         private void FixedUpdate()
@@ -69,7 +62,7 @@ namespace Game.Scripts
             }
 
             Debug.Log($"CmdCollectCoin called: coinNetId = {id}, coinValue = {points}");
-            _gameManager.AddCoinsToPlayer(id, points);
+            // _gameManager.AddCoinsToPlayer(id, points);
             ShowPlayerInfoRpc(points);
         }
 

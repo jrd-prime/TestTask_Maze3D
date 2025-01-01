@@ -6,36 +6,5 @@ namespace Game.Scripts.Shared
     public class CustomNetworkManager : NetworkManager
     {
         [SerializeField] private GameManager gameManager;
-
-        public override void OnStartHost()
-        {
-            base.OnStartHost();
-            Debug.Log("Host started.");
-        }
-
-        public override void OnStartServer()
-        {
-            base.OnStartServer();
-            Debug.Log("Server started.");
-        }
-
-        public override void OnStartClient()
-        {
-            base.OnStartClient();
-            Debug.Log("Client started. Number of players: " + numPlayers);
-        }
-
-        public override void OnClientConnect()
-        {
-            base.OnClientConnect();
-
-            Debug.Log("<color=green>Client connected.</color>");
-        }
-
-        public override void OnClientDisconnect()
-        {
-            base.OnClientDisconnect();
-            Debug.Log("<color=red>Client disconnected.</color>");
-        }
     }
 }

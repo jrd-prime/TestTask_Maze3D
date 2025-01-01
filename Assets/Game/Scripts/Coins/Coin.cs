@@ -1,4 +1,5 @@
 ﻿using System;
+using Game.Scripts.Shared;
 using Mirror;
 using UnityEngine;
 
@@ -6,7 +7,7 @@ namespace Game.Scripts.Coins
 {
     public class Coin : CoinBase
     {
-        [Client]
+        [ClientCallback]
         private void OnTriggerEnter(Collider other)
         {
             if (isClient)
@@ -16,7 +17,7 @@ namespace Game.Scripts.Coins
             }
 
             if (!IsInitialized) throw new Exception("Coin is not initialized! Use Initialize() method first.");
-            
+
             Debug.LogWarning("Coin " + gameObject.name + " triggered.");
 
             if (((1 << other.gameObject.layer) & triggerMask) == 0) return;
@@ -26,21 +27,43 @@ namespace Game.Scripts.Coins
 
             if (player == null) throw new NullReferenceException("Player not found!");
 
-            if (player.isLocalPlayer)
+
+            if (isClient && NetworkClient.isConnected) // Убедитесь, что клиент активен и подключен
             {
-                Debug.LogWarning("its local player");
-                player.CmdCollectCoin(player.netId, Points);
-                NetworkServer.Destroy(gameObject);
+                CmdCollectCoin();
             }
             else
             {
-                Debug.LogWarning("Cannot call command from a non-local player.");
+                Debug.LogWarning("Клиент не активен или не подключен.");
+            }
+
+            // if (player.isLocalPlayer)
+            // {
+            //     Debug.LogWarning("its local player");
+            //     player.CmdCollectCoin(player.netId, Points);
+            // }
+            // else
+            // {
+            //     Debug.LogWarning("Cannot call command from a non-local player.");
+            // }
+        }
+
+        [Command(requiresAuthority = false)]
+        void CmdCollectCoin()
+        {
+            if (isServer) // Убедитесь, что код выполняется на сервере
+            {
+                Debug.LogWarning("Попытка вызвать серверную функцию на сервере.");
+                GameManager.Instance.UnSpawn(this);
+            }
+            else
+            {
+                Debug.LogWarning("Попытка вызвать серверную функцию на клиенте.");
             }
         }
 
         public void Initialize(int pointsPerCoin, Transform parent)
         {
-            Debug.LogWarning("Coin " + gameObject.name + " initialized.");
             transform.parent = parent;
             Points = pointsPerCoin;
             IsInitialized = true;

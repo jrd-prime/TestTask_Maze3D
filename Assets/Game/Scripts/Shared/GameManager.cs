@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Game.Scripts.Coins;
 using Game.Scripts.Help;
 using Game.Scripts.Manager;
 using Mirror;
@@ -8,20 +9,22 @@ namespace Game.Scripts.Shared
 {
     public interface IGameManager
     {
-        public ICoinsManager CoinsManager { get; }
     }
 
     public class GameManager : CustomNetworkBehaviour, IGameManager
     {
-        [SerializeField] private PlayerCharacter playerPrefab;
+        [SerializeField] private CoinsManager CoinsManager;
 
         private readonly Dictionary<uint, int> _scores = new();
 
-        public ICoinsManager CoinsManager { get; private set; }
 
         private GameManager()
         {
         }
+
+        [Server]
+        public void UnSpawn(CoinBase go) => CoinsManager.UnSpawnCoin(go);
+
 
         public static GameManager Instance { get; private set; }
 

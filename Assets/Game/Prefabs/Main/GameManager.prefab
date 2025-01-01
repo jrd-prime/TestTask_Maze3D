@@ -65,5 +65,4 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  playerPrefab: {fileID: -4578377852127101484, guid: ebb48eb3f4e4bfe4e8fd53e0b51b8493, type: 3}
-  dep: {fileID: 3811481385471002060, guid: e2bc35a3a729ba846a5816200fac5fc3, type: 3}
+  CoinsManager: {fileID: 1543701704771152994, guid: 24ce71f637ee5b746b4dc6f44994adf5, type: 3}

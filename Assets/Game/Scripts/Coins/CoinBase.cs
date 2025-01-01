@@ -10,6 +10,6 @@ namespace Game.Scripts.Coins
         [SerializeField] protected LayerMask triggerMask;
         protected int Points;
 
-        protected bool IsInitialized;
+        [SyncVar] protected bool IsInitialized;
     }
 }
